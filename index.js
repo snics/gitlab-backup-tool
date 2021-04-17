@@ -32,8 +32,19 @@ yargs(hideBin(process.argv))
         type: 'string',
         description: 'Specify clone method (default is http)'
       })
-      .help(true)
+
+      .option('backup-projects', {
+        alias: 'p',
+        type: 'boolean',
+        description: 'Enable verbose output'
+      })
+      .help(true);
   }, async (argv) => {
-    await runGetUsers(argv);
+    const { url, backupProjects } = argv;
+    console.log(`Backup GitLab from ${url}:\n`);
+    if (backupProjects) {
+      console.log('Backup GitLab projects:\n');
+      await runGetProject(argv);
+    }
   })
-  .argv
+  .argv;
