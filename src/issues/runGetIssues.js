@@ -56,7 +56,12 @@ async function runGetIssues(argv) {
     );
   }
 
-  // save to file
+  try {
+    await fs.writeJson('./src/issues/issues.json', issues);
+    console.log('Saved all issues to ./src/issues/issues.json');
+  } catch (err) {
+    console.error(err);
+  }
 
 };
 
