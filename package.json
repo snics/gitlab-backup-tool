@@ -18,9 +18,15 @@
   "homepage": "https://github.com/snics/gitlab-backup-tool#readme",
   "dependencies": {
     "bluebird": "^3.7.2",
+    "cli-progress": "^3.9.0",
     "fs-extra": "^9.1.0",
     "loadsh": "^0.0.4",
+    "lodash": "^4.17.21",
     "node-cmd": "^4.0.0",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "index": "0.4.0"
   }
 }
