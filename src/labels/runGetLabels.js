@@ -23,7 +23,6 @@ async function runGetLabels(argv) {
     process.exit(1);
   }
 
-  const method = argv.method == 'ssh' ? 'ssh_url_to_repo' : 'http_url_to_repo';
   const requestOptions = {
     json: true,
     qs: {
@@ -52,6 +51,10 @@ async function runGetLabels(argv) {
       `${baseUrl}/api/v4/groups/${g}/labels `,
       requestOptions
     )
+    labels.forEach(l => {
+      l.groupId = g;
+    });
+
     groupLabels = _.concat(groupLabels, labels)
     if (argv.verbose) {
       console.log(`Got ${labels.length} labels`)
@@ -67,7 +70,7 @@ async function runGetLabels(argv) {
 
   try {
     await fs.writeJson('./src/labels/group_labels.json', groupLabels);
-    console.log('Saved all grouplabels to ./src/labels/group_labels.json');
+    console.log('Saved all group labels to ./src/labels/group_labels.json');
   } catch (err) {
     console.error(err);
   }
@@ -93,6 +96,10 @@ async function runGetLabels(argv) {
       `${baseUrl}/api/v4/projects/${p.id}/labels `,
       requestOptions
     )
+    labels.forEach(l => {
+      l.projectId = p.id;
+    });
+
     projectLabels = _.concat(projectLabels, labels)
     if (argv.verbose) {
       console.log(`Got ${labels.length} labels`)
