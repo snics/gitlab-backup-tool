@@ -1,8 +1,9 @@
-const argv = require('yargs')
+const argv = require('yargs');
 const fs = require('fs-extra');
 const rp = require('request-promise');
 const _ = require('lodash');
 const Promise = require('bluebird');
+const shell = require('shelljs');
 const cmd = require('node-cmd');
 const cmdAsync = Promise.promisify(cmd.get, {
   multiArgs: true,
@@ -89,30 +90,36 @@ async function runGetProject(argv) {
   cloneProgressBar.start(pgits.length, 0);
 
   let index = 0;
-  for ( let repo of pgits ) {
-    const repoName = repo.substring(argv.method == 'ssh' ? 15 : 19, repo.length - 4);
-    const repoPath = `${argv.output || 'gitlab-backup'}/${repoName}`;
+  Promise.each(pgits, async (repo, index) => {
+    const cleanPath = _.replace(repo, 'ssh://git@gitlab.impect.com:2222/', '');
+    const repoPath = `${argv.output || 'gitlab-backup'}/projects/${cleanPath}`;
+    console.log(repoPath);
 
     if (fs.existsSync(repoPath)) {
       const stats = fs.statSync(repoPath);
 
       if (!stats.isDirectory) {
-        console.error(`Path ${repoPath} exist and not a directory. Skipped.`);
+        console.error(` | Path ${cleanPath} exist and not a directory. Skipped.`);
       } else {
-        console.log(`Pulling ${repoName}`);
-        const stdout = await cmdAsync(`git -C ${repoPath} pull`).catch(
-          console.log
-        );
+        console.log(` | Pulling ${repoPath}`);
+        shell.exec(`git -C ${repoPath} pull`);
+        shell.cd(repoPath);
+        shell.exec('git branch -r | grep -v \'\\->\' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done');
+        shell.exec('git fetch --all');
+        shell.exec('git pull --all');
       }
     } else {
-      console.log(`Cloning ${repoName}`);
-      const stdout = await cmdAsync(`git clone ${repo} ${repoPath}`).catch(
-        console.log
-      );
+      console.log(` | Cloning ${repoPath}`);
+      shell.exec(`git clone ${repo} ${repoPath}`);
+      shell.cd(repoPath);
+      shell.exec('git branch -r | grep -v \'\\->\' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done');
+      shell.exec('git fetch --all');
+      shell.exec('git pull --all');
     }
 
     cloneProgressBar.update(++index);
-  }
+    return ++index;
+  })
 
   cloneProgressBar.stop();
 };
