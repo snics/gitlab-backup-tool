@@ -43,16 +43,16 @@ async function runGetLabels(argv) {
   //get groupLabels
   let groupLabels = [];
   
-  await Promise.each(gids, async (g) => {
+  await Promise.each(groups, async (g) => {
     if (argv.verbose) {
-      console.log(`Get labels for groupId: ${g}`)
+      console.log(`Get labels for groupId: ${g.id}`)
     }
     let labels = await rp.get(
-      `${baseUrl}/api/v4/groups/${g}/labels `,
+      `${baseUrl}/api/v4/groups/${g.id}/labels `,
       requestOptions
     )
     labels.forEach(l => {
-      l.groupId = g;
+      l.path = g.path;
     });
 
     groupLabels = _.concat(groupLabels, labels)
@@ -97,7 +97,7 @@ async function runGetLabels(argv) {
       requestOptions
     )
     labels.forEach(l => {
-      l.projectId = p.id;
+      l.path = p.path;
     });
 
     projectLabels = _.concat(projectLabels, labels)
