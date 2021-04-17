@@ -23,6 +23,7 @@
     "loadsh": "^0.0.4",
     "lodash": "^4.17.21",
     "node-cmd": "^4.0.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "yargs": "^16.2.0"
   },

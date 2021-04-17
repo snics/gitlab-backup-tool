@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
+const { runGetProject } = require('./src/projects');
 
 yargs(hideBin(process.argv))
   .command('backup', 'Utility to backup all gitlab repos to a local directory', (yargs) => {
@@ -31,7 +32,7 @@ yargs(hideBin(process.argv))
         description: 'Specify clone method (default is http)'
       })
       .help(true)
-  }, (argv) => {
-    console.log('Test', argv);
+  }, async (argv) => {
+    await runGetProject(argv);
   })
   .argv
