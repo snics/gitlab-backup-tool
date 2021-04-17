@@ -4,6 +4,7 @@ const { hideBin } = require('yargs/helpers');
 const { runGetProject } = require('./src/projects');
 const { runGetUsers } = require('./src/users');
 const { runGetIssues } = require('./src/issues');
+const { runGetLabels } = require('./src/labels');
 
 yargs(hideBin(process.argv))
   .command('backup', 'Utility to backup all gitlab repos to a local directory', (yargs) => {
@@ -35,7 +36,8 @@ yargs(hideBin(process.argv))
       })
       .help(true)
   }, async (argv) => {
-    await runGetUsers(argv);
-    await runGetIssues(argv);
+    // await runGetUsers(argv);
+    // await runGetIssues(argv);
+    runGetLabels(argv)
   })
   .argv
