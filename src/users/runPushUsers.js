@@ -1,37 +1,19 @@
-async function runPushUsers() {
-/*
-    admin	                                No	User is admin - true or false (default)
-    avatar	                                No	Image file for user’s avatar
-    bio	                                    No	User’s biography
-    can_create_group	                    No	User can create groups - true or false
-    color_scheme_id	                        No	User’s color scheme for the file viewer (see the user preference docs for more information)
-    email	                                Yes	Email
-    extern_uid	                            No	External UID
-    external	                            No	Flags the user as external - true or false (default)
-    extra_shared_runners_minutes_limit	    No	Extra pipeline minutes quota for this user (purchased in addition to the minutes included in the plan) 
-    force_random_password	                No	Set user password to a random value - true or false (default)
-    group_id_for_saml	                    No	ID of group where SAML has been configured
-    linkedin	                            No	LinkedIn
-    location	                            No	User’s location
-    name	                                Yes	Name
-    note	                                No	Admin notes for this user
-    organization	                        No	Organization name
-    password	                            No	Password
-    private_profile	                        No	User’s profile is private - true, false (default), or null (is converted to false)
-    projects_limit	                        No	Number of projects user can create
-    provider	                            No	External provider name
-    reset_password	                        No	Send user password reset link - true or false(default)
-    shared_runners_minutes_limit	        No	Pipeline minutes quota for this user (included in plan). Can be nil (default; inherit system default), 0 (unlimited) or > 0 
-    skip_confirmation	                    No	Skip confirmation - true or false (default)
-    skype	                                No	Skype ID
-    theme_id	                            No	The GitLab theme for the user (see the user preference docs for more information)
-    twitter	                                No	Twitter account
-    username	                            Yes	Username
-    view_diffs_file_by_file	                No	Flag indicating the user sees only one file diff per page
-    website_url	                            No	Website URL
-*/
+const argv = require('yargs')
+const fs = require('fs-extra');
+const rp = require('request-promise');
+const _ = require('lodash');
+const Promise = require('bluebird');
+const cmd = require('node-cmd');
+const cmdAsync = Promise.promisify(cmd.get, {
+  multiArgs: true,
+  context: cmd
+});
+const cliProgress = require('cli-progress');
 
+async function runPushUsers(argv) {
+    console.log(`Start read users from json`);
     var data = JSON.parse(fs.readFileSync("./src/users/users.json"));
+    console.log(`Finish read users from json`);
 
     function User(user) {
         this.admin                                  = user.is_admin;
@@ -85,6 +67,13 @@ async function runPushUsers() {
         // -------------------------------------
       }
 
+      data = _.map(data, u => new User(u));
+
+      data.forEach(logUser);
+
+      function logUser(user) {
+        console.log(`Got user: ${user.name} (${user.username}) Admin: ${user.admin}`);
+      }
 };
 
 
