@@ -48,6 +48,7 @@ async function runPushLabels(argv) {
     groupLabels.forEach(l => {
         let groupId = groups[_.findIndex(groups, ['path', l.path])].id;
         console.log(`new groupId: ${groupId}`)
+        l.id = groupId;
         // rp.post(
         //     `${baseUrl}/api/v4/groups/${groupId}/labels `,
         //     requestOptions
@@ -90,6 +91,7 @@ async function runPushLabels(argv) {
     projectLabels.forEach(l => {
         let projectId = projects[_.findIndex(projects, ['path', l.path])].id;
         console.log(`new projectId: ${projectId}`)
+        l.id = projectId;
         // rp.post(
         //     `${baseUrl}/api/v4/projects/${l.projectId}/labels `,
         //     requestOptions
