@@ -3,7 +3,7 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const { runGetProject } = require('./src/projects');
 const { runGetUsers } = require('./src/users');
-const { runGetIssues } = require('./src/issues');
+const { runGetIssues, runPushIssues } = require('./src/issues');
 const { runGetLabels } = require('./src/labels');
 const { runPushLabels } = require('./src/labels');
 

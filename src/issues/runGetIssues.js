@@ -59,7 +59,7 @@ async function runGetIssues(argv) {
   let issues = [];
   let page = 1;
   while (!_.isEmpty(issuePage = await rp.get(
-        `${baseUrl}/api/v4/issues?scope=all&page=${page} `,
+        `${baseUrl}/api/v4/issues?scope=all&page=${page}&state=opened`,
         requestOptions
     ))) {
       console.log(`Reading page: ${page}`)

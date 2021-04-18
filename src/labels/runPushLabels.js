@@ -47,20 +47,37 @@ async function runPushLabels(argv) {
 
     groupLabels.forEach(l => {
         let groupId = groups[_.findIndex(groups, ['path', l.path])].id;
-        console.log(`new groupId: ${groupId}`)
         l.id = groupId;
-        // rp.post(
-        //     `${baseUrl}/api/v4/groups/${groupId}/labels `,
-        //     requestOptions
-        // ).then(function (body) {
-        //     if(argv.verbose) {
-        //         console.error(`Created group label ${l.id}`)
-        //     }
-        // })
-        // .catch(function (err) {
-        //     console.error(`Faild to create group label ${l.id}: ${err}`)
-        // });
+        let options = {
+            method: 'POST',
+            uri: `${baseUrl}/api/v4/groups/${groupId}/labels `,
+            body: {
+                l
+            },
+            json: true, 
+            qs: {
+                simple: true
+            },
+            headers: {
+                'PRIVATE-TOKEN': argv.token
+              }
+        };
+        rp(options)
+            .then(function (parsedBody) {
+                if(argv.verbose) {
+                    console.log(`Created group label { id:${l.id}, name:${l.name} }`)
+                }
+            })
+            .catch(function (err) {
+                console.error(`Faild to create group label { id:${l.id}, name:${l.name} }: ${err}`)
+            });
     });
+
+    if (argv.verbose) {
+        console.log(
+            `Created all group labels! \n`,
+        );
+    }
 
     //get projects
     let projects = []
@@ -90,19 +107,36 @@ async function runPushLabels(argv) {
 
     projectLabels.forEach(l => {
         let projectId = projects[_.findIndex(projects, ['path', l.path])].id;
-        console.log(`new projectId: ${projectId}`)
         l.id = projectId;
-        // rp.post(
-        //     `${baseUrl}/api/v4/projects/${l.projectId}/labels `,
-        //     requestOptions
-        // ).then(function (body) {
-        //     if(argv.verbose) {
-        //         console.error(`Created project label ${l.id}`)
-        //     }
-        // })
-        // .catch(function (err) {
-        //     console.error(`Faild to create project label ${l.id}: ${err}`)
-        // });
+        let options = {
+            method: 'POST',
+            uri: `${baseUrl}/api/v4/projects/${l.projectId}/labels `,
+            body: {
+                l
+            },
+            json: true, 
+            qs: {
+                simple: true
+            },
+            headers: {
+                'PRIVATE-TOKEN': argv.token
+              }
+        };
+        rp(options)
+            .then(function (parsedBody) {
+                if(argv.verbose) {
+                    console.log(`Created project label { id:${l.id}, name:${l.name} }`)
+                }
+            })
+            .catch(function (err) {
+                console.error(`Faild to create project label { id:${l.id}, name:${l.name} }: ${err}`)
+            });
     });
+    
+    if (argv.verbose) {
+        console.log(
+            `Created all project labels! \n`,
+        );
+    }
 };
 module.exports = runPushLabels;
