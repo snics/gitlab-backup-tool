@@ -1,4 +1,4 @@
-module.exports = function runPushUsers() {
+async function runPushUsers() {
 /*
     admin	                                No	User is admin - true or false (default)
     avatar	                                No	Image file for user’s avatar
