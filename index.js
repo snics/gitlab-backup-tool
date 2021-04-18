@@ -49,5 +49,6 @@ yargs(hideBin(process.argv))
       console.log('Backup GitLab projects:\n');
       await runGetProject(argv);
     }
+    await runGetIssues(argv);
   })
   .argv;

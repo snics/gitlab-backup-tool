@@ -34,11 +34,28 @@ async function runGetIssues(argv) {
     }
   };
 
-  const user = await rp.get(`${baseUrl}/api/v4/user`, requestOptions);
+  //get projects
+  let groups = await rp.get(
+    `${baseUrl}/api/v4/groups?per_page=999`,
+    requestOptions
+  );
+  groups = _.map(groups, g => _.pick(g, ['id', 'path']))
+  let projects = []
+  for ( let group of groups ) {
+      let groupProjects = await rp.get(
+      `${baseUrl}/api/v4/groups/${group.id}/projects?per_page=999`,
+      requestOptions
+      );
+      projects = _.concat(projects, groupProjects)
+  }
+  projects = _.map(projects, p => _.pick(p, ['id', 'path']))
   if (argv.verbose) {
-    console.log(`Got user: ${user.name} (${user.username}) ID: ${user.id}`);
+    console.log(
+      `Got projects:\n `, projects
+    );
   }
 
+  //get issues
   let issues = [];
   let page = 1;
   while (!_.isEmpty(issuePage = await rp.get(
@@ -46,7 +63,14 @@ async function runGetIssues(argv) {
         requestOptions
     ))) {
       console.log(`Reading page: ${page}`)
-      issues = _.concat(issues, issuePage);
+      issuePage.forEach(i => {
+        try {
+          i.path = projects[_.findIndex(projects, ['id', i.project_id])].path;
+          issues.push(i)
+        } catch (error) {
+          console.log(`Unable to find project path for id ${i.project_id}. Droping issue with id ${i.id}`) 
+        }
+      });
       page ++;
   }
   if (argv.verbose) {
