@@ -34,7 +34,7 @@ async function runGetUsers(argv) {
     }
   };
 
-  const users = await rp.get(`${baseUrl}/api/v4/users`, requestOptions);
+  const users = await rp.get(`${baseUrl}/api/v4/users?per_page=999`, requestOptions);
 
   users.forEach(logUsers);
 
